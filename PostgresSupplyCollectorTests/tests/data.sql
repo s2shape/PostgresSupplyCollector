@@ -1,3 +1,5 @@
+--- Test data
+
 create table test_data_types (
    serial_field serial PRIMARY KEY,
    bool_field boolean,
@@ -28,7 +30,7 @@ create table test_arrays (
 );
 
 insert into test_arrays(text_array, int_array)
-values(ARRAY['one', 'two'], ARRAY[1,2,3])
+values(ARRAY['one', 'two'], ARRAY[1,2,3]);
 
 create table test_field_names (
    id serial PRIMARY KEY,
