@@ -7,12 +7,22 @@ namespace PostgresSupplyCollectorTests
     public class PostgresSupplyCollectorTests {
         private readonly PostgresSupplyCollector.PostgresSupplyCollector _instance;
         public readonly DataContainer _container;
+        public readonly DataEntity _emailToAddress;
 
         public PostgresSupplyCollectorTests() {
             _instance = new PostgresSupplyCollector.PostgresSupplyCollector();
             _container = new DataContainer()
             {
                 ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "localhost", 5432)
+            };
+            _emailToAddress = new DataEntity()
+            {
+                Container = _container,
+                Collection = new DataCollection()
+                {
+                    Name = "EMAIL"
+                },
+                Name = "TO_ADDRS_EMAILS"
             };
         }
 
@@ -64,6 +74,14 @@ namespace PostgresSupplyCollectorTests
                 Assert.NotEmpty(element.DataType);
                 Assert.NotEmpty(element.DbDataType);
             }
+        }
+
+        [Fact]
+        public void CollectSampleTest()
+        {
+            var samples = _instance.CollectSample(_emailToAddress, 161);
+            Assert.Equal(161, samples.Count);
+            Assert.Contains("qa25@example.com", samples);
         }
 
     }

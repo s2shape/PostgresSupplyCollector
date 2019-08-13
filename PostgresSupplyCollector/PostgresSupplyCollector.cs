@@ -67,7 +67,9 @@ namespace PostgresSupplyCollector
                             var liveRows = reader.GetInt64(column++);
                             var deadRows = reader.GetInt64(column++);
 
-                            var deadSize = ((double) size / (liveRows + deadRows)) * deadRows;
+                            var totalRows = liveRows + deadRows;
+
+                            var deadSize = totalRows == 0 ? 0 : ((double) size / (liveRows + deadRows)) * deadRows;
 
                             metrics.Add(new DataCollectionMetrics() {
                                 Schema = schema,
