@@ -172,7 +172,7 @@ namespace PostgresSupplyCollectorTests
             var samples = _instance.CollectSample(textEntity, 1);
             Assert.True(samples != null && samples.Count == 1);
 
-            Assert.Equal("{one, two}", samples[0]);
+            Assert.Equal("one,two", samples[0]);
 
             var intEntity = new DataEntity()
             {
@@ -187,7 +187,7 @@ namespace PostgresSupplyCollectorTests
             samples = _instance.CollectSample(intEntity, 1);
             Assert.True(samples != null && samples.Count == 1);
 
-            Assert.Equal("{1, 2, 3}", samples[0]);
+            Assert.Equal("1,2,3", samples[0]);
         }
 
 

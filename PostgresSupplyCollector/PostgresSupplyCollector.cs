@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Npgsql;
 using S2.BlackSwan.SupplyCollector;
 using S2.BlackSwan.SupplyCollector.Models;
@@ -33,7 +34,22 @@ namespace PostgresSupplyCollector
 
                     using (var reader = cmd.ExecuteReader()) {
                         while (reader.Read()) {
-                            result.Add(reader[0].ToString());
+                            var val = reader[0];
+                            if (val is DBNull) {
+                                result.Add(null);
+                            } else if (val.GetType().IsArray) {
+                                var arr = (Array) val;
+                                var sb = new StringBuilder();
+                                for (int i = 0; i < arr.Length; i++) {
+                                    if (sb.Length > 0)
+                                        sb.Append(",");
+                                    sb.Append(arr.GetValue(i).ToString())
+;                                }
+                                result.Add(sb.ToString());
+                            }
+                            else {
+                                result.Add(val.ToString());
+                            }
                         }
                     }
                 }
