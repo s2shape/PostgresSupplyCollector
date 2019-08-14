@@ -144,7 +144,7 @@ namespace PostgresSupplyCollectorTests
             Assert.True(refField.IsForeignKey);
 
             foreach (var column in elements) {
-                if (column.Name.Equals("id") || column.Name.Equals("name") || column.Name.Equals("index_id")) {
+                if (column.Name.Equals("id") || column.Name.Equals("name") || column.Name.Equals("index_id") || column.Name.Equals("serial_field")) {
                     continue;
                 }
 

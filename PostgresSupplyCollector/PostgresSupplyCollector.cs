@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Npgsql;
@@ -117,7 +118,7 @@ namespace PostgresSupplyCollector
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText =
-                        "select c.table_schema, c.table_name, c.column_name, c.data_type, c.is_generated, c.is_nullable, c.is_identity,\n"+
+                        "select c.table_schema, c.table_name, c.column_name, c.data_type, c.column_default, c.is_nullable, c.is_identity,\n"+
                         "(select count(*)\n" +
                         "   from information_schema.constraint_column_usage ccu\n" +
                         "   join information_schema.table_constraints tc on ccu.constraint_name = tc.constraint_name and ccu.constraint_schema = tc.constraint_schema and tc.constraint_type = 'PRIMARY KEY'\n" +
@@ -144,13 +145,13 @@ namespace PostgresSupplyCollector
                         {
                             int column = 0;
 
-                            var schema = reader.GetString(column++);
-                            var table = reader.GetString(column++);
-                            var columnName = reader.GetString(column++);
-                            var dataType = reader.GetString(column++);
-                            var isGenerated = "YES".Equals(reader.GetString(column++), StringComparison.InvariantCultureIgnoreCase);
-                            var isNullable = "YES".Equals(reader.GetString(column++), StringComparison.InvariantCultureIgnoreCase);
-                            var isIdentity = "YES".Equals(reader.GetString(column++), StringComparison.InvariantCultureIgnoreCase);
+                            var schema = reader.GetDbString(column++);
+                            var table = reader.GetDbString(column++);
+                            var columnName = reader.GetDbString(column++);
+                            var dataType = reader.GetDbString(column++);
+                            var columnDef = reader.GetDbString(column++);
+                            var isNullable = "YES".Equals(reader.GetDbString(column++), StringComparison.InvariantCultureIgnoreCase);
+                            var isIdentity = "YES".Equals(reader.GetDbString(column++), StringComparison.InvariantCultureIgnoreCase);
                             var isPrimary = reader.GetInt64(column++) > 0;
                             var isUnique = reader.GetInt64(column++) > 0;
                             var isRef = reader.GetInt64(column++) > 0;
@@ -171,8 +172,8 @@ namespace PostgresSupplyCollector
                                 Collection = collection,
                                 DbDataType = dataType,
                                 DataType = dataType,
-                                IsAutoNumber = isGenerated,
-                                IsComputed = isGenerated,
+                                IsAutoNumber = !String.IsNullOrEmpty(columnDef) && columnDef.StartsWith("nextval(", StringComparison.InvariantCultureIgnoreCase),
+                                IsComputed = !String.IsNullOrEmpty(columnDef),
                                 IsForeignKey = isRef,
                                 IsIndexed = isPrimary || isRef,
                                 IsPrimaryKey = isPrimary,
@@ -198,6 +199,15 @@ namespace PostgresSupplyCollector
             catch (Exception) {
                 return false;
             }
+        }
+    }
+
+    internal static class DbDataReaderExtensions {
+        internal static string GetDbString(this DbDataReader reader, int ordinal)
+        {
+            if (reader.IsDBNull(ordinal))
+                return null;
+            return reader.GetString(ordinal);
         }
     }
 }
