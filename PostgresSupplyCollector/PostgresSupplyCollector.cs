@@ -106,8 +106,39 @@ namespace PostgresSupplyCollector
 
         private DataType ConvertDataType(string dbDataType) {
             if ("integer".Equals(dbDataType)) {
-                return DataType.Int;
+                return DataType.Long;
+            } else if ("smallint".Equals(dbDataType)) {
+                return DataType.Short;
+            } else if ("boolean".Equals(dbDataType)) {
+                return DataType.Boolean;
+            } else if ("character".Equals(dbDataType)) {
+                return DataType.Char;
+            } else if ("character varying".Equals(dbDataType)) {
+                return DataType.String;
+            } else if ("text".Equals(dbDataType)) {
+                return DataType.String;
+            } else if ("double precision".Equals(dbDataType)) {
+                return DataType.Double;
+            } else if ("real".Equals(dbDataType)) {
+                return DataType.Double;
+            } else if ("numeric".Equals(dbDataType)) {
+                return DataType.Decimal;
+            } else if ("date".Equals(dbDataType)) {
+                return DataType.DateTime;
+            } else if ("time without time zone".Equals(dbDataType)) {
+                return DataType.DateTime;
+            } else if ("time with time zone".Equals(dbDataType)) {
+                return DataType.DateTime;
+            } else if ("timestamp without time zone".Equals(dbDataType)) {
+                return DataType.DateTime;
+            } else if ("timestamp with time zone".Equals(dbDataType)) {
+                return DataType.DateTime;
+            } else if ("json".Equals(dbDataType)) {
+                return DataType.String;
+            } else if ("uuid".Equals(dbDataType)) {
+                return DataType.Guid;
             }
+
             return DataType.Unknown;
         }
 

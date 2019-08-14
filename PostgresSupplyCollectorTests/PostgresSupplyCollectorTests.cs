@@ -131,7 +131,7 @@ namespace PostgresSupplyCollectorTests
             Assert.Equal(4, idFields.Length);
 
             foreach (var idField in idFields) {
-                Assert.Equal(DataType.Int, idField.DataType);
+                Assert.Equal(DataType.Long, idField.DataType);
                 Assert.True(idField.IsAutoNumber);
                 Assert.True(idField.IsPrimaryKey);
             }
