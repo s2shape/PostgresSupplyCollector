@@ -36,15 +36,15 @@ namespace PostgresSupplyCollectorTests
         public void GetDataCollectionMetricsTest() {
             var metrics = new DataCollectionMetrics[] {
                 new DataCollectionMetrics()
-                    {Name = "test_data_types", RowCounts = 1, TotalSpaceKB = 8, TotalSpaceMB = (decimal)0.008},
+                    {Name = "test_data_types", RowCount = 1, TotalSpaceKB = 8},
                 new DataCollectionMetrics()
-                    {Name = "test_arrays", RowCounts = 1, TotalSpaceKB = 8, TotalSpaceMB = (decimal)0.008},
+                    {Name = "test_arrays", RowCount = 1, TotalSpaceKB = 8},
                 new DataCollectionMetrics()
-                    {Name = "test_field_names", RowCounts = 1, TotalSpaceKB = 8, TotalSpaceMB = (decimal)0.008},
+                    {Name = "test_field_names", RowCount = 1, TotalSpaceKB = 8},
                 new DataCollectionMetrics()
-                    {Name = "test_index", RowCounts = 7, TotalSpaceKB = 8, TotalSpaceMB = (decimal)0.008},
+                    {Name = "test_index", RowCount = 7, TotalSpaceKB = 8},
                 new DataCollectionMetrics()
-                    {Name = "test_index_ref", RowCounts = 2, TotalSpaceKB = 8, TotalSpaceMB = (decimal)0.008}
+                    {Name = "test_index_ref", RowCount = 2, TotalSpaceKB = 8}
             };
 
             var result = _instance.GetDataCollectionMetrics(_container);
@@ -54,9 +54,8 @@ namespace PostgresSupplyCollectorTests
                 var resultMetric = result.Find(x => x.Name.Equals(metric.Name));
                 Assert.NotNull(resultMetric);
 
-                Assert.Equal(metric.RowCounts, resultMetric.RowCounts);
+                Assert.Equal(metric.RowCount, resultMetric.RowCount);
                 Assert.Equal(metric.TotalSpaceKB, resultMetric.TotalSpaceKB);
-                Assert.Equal(metric.TotalSpaceMB, resultMetric.TotalSpaceMB, 3);
             }
         }
 
@@ -132,7 +131,7 @@ namespace PostgresSupplyCollectorTests
             Assert.Equal(4, idFields.Length);
 
             foreach (var idField in idFields) {
-                Assert.Equal("integer", idField.DataType);
+                Assert.Equal(DataType.Int, idField.DataType);
                 Assert.True(idField.IsAutoNumber);
                 Assert.True(idField.IsPrimaryKey);
             }
@@ -157,33 +156,17 @@ namespace PostgresSupplyCollectorTests
 
 
         [Fact]
-        public void ArraysTest()
-        {
-            var textEntity = new DataEntity()
-            {
-                Container = _container,
-                Collection = new DataCollection()
-                {
-                    Container = _container,
-                    Name = "test_arrays"
-                },
-                Name = "text_array"
-            };
+        public void ArraysTest() {
+            var textEntity = new DataEntity("text_array", DataType.Unknown, "string[]", _container,
+                new DataCollection(_container, "test_arrays"));
+
             var samples = _instance.CollectSample(textEntity, 1);
             Assert.True(samples != null && samples.Count == 1);
 
             Assert.Equal("one,two", samples[0]);
 
-            var intEntity = new DataEntity()
-            {
-                Container = _container,
-                Collection = new DataCollection()
-                {
-                    Container = _container,
-                    Name = "test_arrays"
-                },
-                Name = "int_array"
-            };
+            var intEntity = new DataEntity("int_array", DataType.Unknown, "int[]", _container,
+                new DataCollection(_container, "test_arrays"));
             samples = _instance.CollectSample(intEntity, 1);
             Assert.True(samples != null && samples.Count == 1);
 
@@ -192,16 +175,10 @@ namespace PostgresSupplyCollectorTests
 
 
         [Fact]
-        public void CollectSampleTest()
-        {
-            var entity = new DataEntity() {
-                Container = _container,
-                Collection = new DataCollection() {
-                    Container = _container,
-                    Name = "test_index"
-                },
-                Name = "name"
-            };
+        public void CollectSampleTest() {
+            var entity = new DataEntity("name", DataType.String, "character varying", _container,
+                new DataCollection(_container, "test_index"));
+
             var samples = _instance.CollectSample(entity, 5);
             Assert.Equal(5, samples.Count);
             Assert.Contains("Wednesday", samples);

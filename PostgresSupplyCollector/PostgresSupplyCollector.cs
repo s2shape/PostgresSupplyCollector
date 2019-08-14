@@ -91,13 +91,10 @@ namespace PostgresSupplyCollector
                             metrics.Add(new DataCollectionMetrics() {
                                 Schema = schema,
                                 Name = table,
-                                RowCounts = liveRows,
+                                RowCount = liveRows,
                                 TotalSpaceKB = size / 1024,
-                                TotalSpaceMB = (decimal)size / (1024 * 1024),
                                 UnUsedSpaceKB = (long)(deadSize / 1024),
-                                UnUsedSpaceMB = (decimal)deadSize / (1024 * 1024),
-                                UsedSpaceKB = (long)(size - deadSize) / 1024,
-                                UsedSpaceMB = (decimal)(size - deadSize) / (1024 * 1024)
+                                UsedSpaceKB = (long)(size - deadSize) / 1024
                             });
                         }
                     }
@@ -105,6 +102,13 @@ namespace PostgresSupplyCollector
             }
 
             return metrics;
+        }
+
+        private DataType ConvertDataType(string dbDataType) {
+            if ("integer".Equals(dbDataType)) {
+                return DataType.Int;
+            }
+            return DataType.Unknown;
         }
 
         public override (List<DataCollection>, List<DataEntity>) GetSchema(DataContainer container) {
@@ -159,26 +163,19 @@ namespace PostgresSupplyCollector
                             if (collection == null || !collection.Schema.Equals(schema) ||
                                 !collection.Name.Equals(table)) {
 
-                                collection = new DataCollection() {
-                                    Container = container,
-                                    Schema = schema,
-                                    Name = table
+                                collection = new DataCollection(container, table) {
+                                    Schema = schema
                                 };
                                 collections.Add(collection);
                             }
 
-                            entities.Add(new DataEntity() {
-                                Container = container,
-                                Collection = collection,
-                                DbDataType = dataType,
-                                DataType = dataType,
+                            entities.Add(new DataEntity(columnName, ConvertDataType(dataType), dataType, container, collection) {
                                 IsAutoNumber = !String.IsNullOrEmpty(columnDef) && columnDef.StartsWith("nextval(", StringComparison.InvariantCultureIgnoreCase),
                                 IsComputed = !String.IsNullOrEmpty(columnDef),
                                 IsForeignKey = isRef,
                                 IsIndexed = isPrimary || isRef,
                                 IsPrimaryKey = isPrimary,
-                                IsUniqueKey = isUnique,
-                                Name = columnName
+                                IsUniqueKey = isUnique
                             });
                         }
                     }
