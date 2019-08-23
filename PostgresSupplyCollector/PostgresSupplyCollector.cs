@@ -40,13 +40,9 @@ namespace PostgresSupplyCollector
                                 result.Add(null);
                             } else if (val.GetType().IsArray) {
                                 var arr = (Array) val;
-                                var sb = new StringBuilder();
-                                for (int i = 0; i < arr.Length; i++) {
-                                    if (sb.Length > 0)
-                                        sb.Append(",");
-                                    sb.Append(arr.GetValue(i).ToString())
-;                                }
-                                result.Add(sb.ToString());
+                                for (int i = 0; i < arr.Length && result.Count < sampleSize; i++) {
+                                    result.Add(arr.GetValue(i).ToString());
+                                }
                             }
                             else {
                                 result.Add(val.ToString());

@@ -160,17 +160,17 @@ namespace PostgresSupplyCollectorTests
             var textEntity = new DataEntity("text_array", DataType.Unknown, "string[]", _container,
                 new DataCollection(_container, "test_arrays"));
 
-            var samples = _instance.CollectSample(textEntity, 1);
-            Assert.True(samples != null && samples.Count == 1);
-
-            Assert.Equal("one,two", samples[0]);
+            var samples = _instance.CollectSample(textEntity, 2);
+            Assert.True(samples != null && samples.Count == 2);
+            Assert.Contains("one", samples);
+            Assert.Contains("two", samples);
 
             var intEntity = new DataEntity("int_array", DataType.Unknown, "int[]", _container,
                 new DataCollection(_container, "test_arrays"));
-            samples = _instance.CollectSample(intEntity, 1);
-            Assert.True(samples != null && samples.Count == 1);
-
-            Assert.Equal("1,2,3", samples[0]);
+            samples = _instance.CollectSample(intEntity, 2);
+            Assert.True(samples != null && samples.Count == 2);
+            Assert.Contains("1", samples);
+            Assert.Contains("2", samples);
         }
 
 
