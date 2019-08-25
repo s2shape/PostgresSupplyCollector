@@ -14,7 +14,7 @@ namespace PostgresSupplyCollectorTests
             _instance = new PostgresSupplyCollector.PostgresSupplyCollector();
             _container = new DataContainer()
             {
-                ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "192.168.0.105", 5432)
+                ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "localhost", 5432)
             };
         }
 
