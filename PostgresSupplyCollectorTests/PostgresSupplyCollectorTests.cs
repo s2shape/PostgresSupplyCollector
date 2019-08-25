@@ -14,7 +14,7 @@ namespace PostgresSupplyCollectorTests
             _instance = new PostgresSupplyCollector.PostgresSupplyCollector();
             _container = new DataContainer()
             {
-                ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "localhost", 5432)
+                ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "192.168.0.105", 5432)
             };
         }
 
@@ -167,10 +167,11 @@ namespace PostgresSupplyCollectorTests
 
             var intEntity = new DataEntity("int_array", DataType.Unknown, "int[]", _container,
                 new DataCollection(_container, "test_arrays"));
-            samples = _instance.CollectSample(intEntity, 2);
-            Assert.True(samples != null && samples.Count == 2);
+            samples = _instance.CollectSample(intEntity, 3);
+            Assert.True(samples != null && samples.Count == 3);
             Assert.Contains("1", samples);
             Assert.Contains("2", samples);
+            Assert.Contains("3", samples);
         }
 
 
@@ -181,8 +182,6 @@ namespace PostgresSupplyCollectorTests
 
             var samples = _instance.CollectSample(entity, 5);
             Assert.Equal(5, samples.Count);
-            Assert.Contains("Wednesday", samples);
         }
-
     }
 }

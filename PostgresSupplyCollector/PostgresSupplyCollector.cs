@@ -31,7 +31,7 @@ namespace PostgresSupplyCollector
                 conn.Open();
 
                 using (var cmd = conn.CreateCommand()) {
-                    cmd.CommandText = $"SELECT {dataEntity.Name} FROM {dataEntity.Collection.Name} LIMIT {sampleSize}";
+                    cmd.CommandText = $"SELECT {dataEntity.Name} FROM {dataEntity.Collection.Name} order by random() LIMIT {sampleSize}";
 
                     using (var reader = cmd.ExecuteReader()) {
                         while (reader.Read()) {
