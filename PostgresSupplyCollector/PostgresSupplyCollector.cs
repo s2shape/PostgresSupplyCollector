@@ -30,8 +30,20 @@ namespace PostgresSupplyCollector
             using (var conn = new NpgsqlConnection(dataEntity.Container.ConnectionString)) {
                 conn.Open();
 
+                long rows;
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = $"SELECT COUNT(*) FROM {dataEntity.Collection.Name}";
+                    rows = (long)cmd.ExecuteScalar();
+                }
+
+                int sampleRowsPct = rows == 0 ? 0 : (int)(sampleSize * 100.0 / rows);
+                sampleRowsPct += 10;
+                if (sampleRowsPct > 100)
+                    sampleRowsPct = 100;
+
                 using (var cmd = conn.CreateCommand()) {
-                    cmd.CommandText = $"SELECT {dataEntity.Name} FROM {dataEntity.Collection.Name} order by random() LIMIT {sampleSize}";
+                    cmd.CommandText = $"SELECT {dataEntity.Name} FROM {dataEntity.Collection.Name} TABLESAMPLE BERNOULLI({sampleRowsPct}) LIMIT {sampleSize}";
 
                     using (var reader = cmd.ExecuteReader()) {
                         while (reader.Read()) {
