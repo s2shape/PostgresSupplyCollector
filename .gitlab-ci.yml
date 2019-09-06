@@ -24,6 +24,7 @@ build:
 test:
   stage: test
   script:
+    - sudo apt-get install -y postgresql postgresql-client libpq-dev
     - export PGPASSWORD=$POSTGRES_PASSWORD
     - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f PostgresSupplyCollectorTests/tests/data.sql
     - dotnet build
