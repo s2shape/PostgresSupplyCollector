@@ -1,0 +1,30 @@
+image: microsoft/dotnet:latest
+
+stages:
+  - build
+  - test
+
+services:
+  - postgres
+
+variables:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: postgres
+
+before_script:
+  - dotnet restore
+
+build:
+  stage: build
+  script:
+    - dotnet build
+
+test:
+  stage: test
+  script:
+    - export PGPASSWORD=$POSTGRES_PASSWORD
+    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f PostgresSupplyCollectorTests/tests/data.sql
+    - dotnet build
+    - dotnet test

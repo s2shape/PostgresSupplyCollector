@@ -14,7 +14,12 @@ namespace PostgresSupplyCollectorTests
             _instance = new PostgresSupplyCollector.PostgresSupplyCollector();
             _container = new DataContainer()
             {
-                ConnectionString = _instance.BuildConnectionString("postgres", "postgres", "postgres", "localhost", 5432)
+                ConnectionString = _instance.BuildConnectionString(
+                    Environment.GetEnvironmentVariable("POSTGRES_USER"),
+                    Environment.GetEnvironmentVariable("POSTGRES_PASSWORD"),
+                    Environment.GetEnvironmentVariable("POSTGRES_DB"),
+                    Environment.GetEnvironmentVariable("POSTGRES_HOST"),
+                    5432)
             };
         }
 
