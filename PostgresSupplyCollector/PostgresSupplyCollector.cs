@@ -38,7 +38,7 @@ namespace PostgresSupplyCollector
                 }
 
                 int sampleRowsPct = rows == 0 ? 0 : (int)(sampleSize * 100.0 / rows);
-                sampleRowsPct += 10;
+                sampleRowsPct += 20;
                 if (sampleRowsPct > 100)
                     sampleRowsPct = 100;
 
