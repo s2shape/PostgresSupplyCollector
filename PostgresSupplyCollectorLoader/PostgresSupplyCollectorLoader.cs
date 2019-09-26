@@ -14,25 +14,6 @@ namespace PostgresSupplyCollectorLoader
             // do nothing
         }
 
-        private NpgsqlDbType ConvertDbType(DataType dataType)
-        {
-            switch (dataType)
-            {
-                case DataType.String:
-                    return NpgsqlDbType.Text;
-                case DataType.Int:
-                    return NpgsqlDbType.Integer;
-                case DataType.Double:
-                    return NpgsqlDbType.Double;
-                case DataType.Boolean:
-                    return NpgsqlDbType.Boolean;
-                case DataType.DateTime:
-                    return NpgsqlDbType.Timestamp;
-                default:
-                    return NpgsqlDbType.Integer;
-            }
-        }
-
         public override void LoadSamples(DataEntity[] dataEntities, long count)
         {
             using (var conn = new NpgsqlConnection(dataEntities[0].Container.ConnectionString))
