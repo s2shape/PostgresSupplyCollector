@@ -6,11 +6,14 @@ using Xunit;
 
 namespace PostgresSupplyCollectorTests
 {
-    public class PostgresSupplyCollectorTests {
+    public class PostgresSupplyCollectorTests : IClassFixture<LaunchSettingsFixture>
+    {
         private readonly PostgresSupplyCollector.PostgresSupplyCollector _instance;
         public readonly DataContainer _container;
+        private LaunchSettingsFixture _fixture;
 
-        public PostgresSupplyCollectorTests() {
+        public PostgresSupplyCollectorTests(LaunchSettingsFixture fixture) {
+            _fixture = fixture;
             _instance = new PostgresSupplyCollector.PostgresSupplyCollector();
             _container = new DataContainer()
             {

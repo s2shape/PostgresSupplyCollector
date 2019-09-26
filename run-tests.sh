@@ -5,7 +5,7 @@ export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 export POSTGRES_HOST=localhost
 sleep 10
-docker cp PostgresSupplyCollectorTests/tests/data.sql postgres:/docker-entrypoint-initdb.d/data.sql
+docker cp PostgresSupplyCollectorLoader/tests/data.sql postgres:/docker-entrypoint-initdb.d/data.sql
 docker exec -u postgres postgres psql postgres postgres -f docker-entrypoint-initdb.d/data.sql
 dotnet test
 docker stop postgres
